@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+export const dynamic = "force-dynamic";
 
-function slugifyCompany(name: string) {
-  return name.trim().toLowerCase().replace(/\s+/g, "-");
-}
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../../lib/supabase";
 
 export default function JavaNewPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const companyParam = searchParams.get("company") || "";
 
   const [form, setForm] = useState({
     name: "",
@@ -21,99 +17,83 @@ export default function JavaNewPage() {
     experience: "",
   });
 
-  useEffect(() => {
-    if (companyParam) {
-      setForm((p) => ({ ...p, company: decodeURIComponent(companyParam) }));
-    }
-  }, [companyParam]);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const companySlug = slugifyCompany(form.company);
-
     const { error } = await supabase.from("experiences").insert([
       {
+        ...form,
         category: "java",
-        name: form.name,
-        company: companySlug,
-        round_type: form.round_type,
-        difficulty: form.difficulty,
-        experience: form.experience,
+        company: form.company.toLowerCase(),
       },
     ]);
 
-    if (error) return alert(error.message);
-
-    router.push(`/java/${encodeURIComponent(companySlug)}`);
+    if (!error) {
+      router.push("/java");
+    } else {
+      alert(error.message);
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-xl rounded-3xl border border-white/15 bg-white/5 backdrop-blur-xl shadow-2xl p-8"
+        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg space-y-4"
       >
-        <h1 className="text-3xl font-extrabold text-center">
+        <h1 className="text-2xl font-bold text-center">
           Add Java Interview Experience
         </h1>
-        <p className="text-center text-white/70 mt-2">
-          Share what happened and help others.
-        </p>
 
-        <div className="space-y-4 mt-8">
-          <input
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="Your Name"
-            required
-            className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-white/30"
-          />
+        <input
+          placeholder="Your Name"
+          className="w-full border p-2 rounded"
+          required
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
 
-          <input
-            value={form.company}
-            onChange={(e) => setForm({ ...form, company: e.target.value })}
-            placeholder="Company Name (e.g., Amazon)"
-            required
-            className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-white/30"
-          />
+        <input
+          placeholder="Company Name"
+          className="w-full border p-2 rounded"
+          required
+          onChange={(e) => setForm({ ...form, company: e.target.value })}
+        />
 
-          <div className="grid grid-cols-2 gap-4">
-            <select
-              value={form.round_type}
-              onChange={(e) => setForm({ ...form, round_type: e.target.value })}
-              className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-white/30"
-            >
-              <option value="screening">Screening</option>
-              <option value="technical">Technical</option>
-              <option value="coding">Coding</option>
-              <option value="panel">Panel</option>
-            </select>
+        <select
+          className="w-full border p-2 rounded"
+          onChange={(e) =>
+            setForm({ ...form, round_type: e.target.value })
+          }
+        >
+          <option value="screening">Screening</option>
+          <option value="technical">Technical</option>
+          <option value="coding">Coding</option>
+          <option value="panel">Panel</option>
+        </select>
 
-            <select
-              value={form.difficulty}
-              onChange={(e) => setForm({ ...form, difficulty: e.target.value })}
-              className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-white/30"
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
+        <select
+          className="w-full border p-2 rounded"
+          onChange={(e) =>
+            setForm({ ...form, difficulty: e.target.value })
+          }
+        >
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
 
-          <textarea
-            value={form.experience}
-            onChange={(e) => setForm({ ...form, experience: e.target.value })}
-            placeholder="Write your experience..."
-            required
-            rows={6}
-            className="w-full rounded-xl border border-white/15 bg-black/20 px-4 py-3 text-white placeholder:text-white/40 outline-none focus:ring-2 focus:ring-white/30"
-          />
+        <textarea
+          placeholder="Write your experience..."
+          className="w-full border p-2 rounded h-32"
+          required
+          onChange={(e) =>
+            setForm({ ...form, experience: e.target.value })
+          }
+        />
 
-          <button className="w-full rounded-xl py-3 font-semibold bg-white text-black hover:opacity-90 transition shadow">
-            Save Experience
-          </button>
-        </div>
+        <button className="w-full bg-black text-white p-2 rounded">
+          Save Experience
+        </button>
       </form>
     </div>
   );
