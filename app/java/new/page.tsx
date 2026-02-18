@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
@@ -12,86 +10,86 @@ export default function JavaNewPage() {
   const [form, setForm] = useState({
     name: "",
     company: "",
-    round_type: "screening",
-    difficulty: "easy",
+    round_type: "",
+    difficulty: "",
     experience: "",
   });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const { error } = await supabase.from("experiences").insert([
+    await supabase.from("experiences").insert([
       {
         ...form,
         category: "java",
-        company: form.company.toLowerCase(),
+        company: form.company.trim().toLowerCase(),
       },
     ]);
 
-    if (!error) {
-      router.push("/java");
-    } else {
-      alert(error.message);
-    }
+    router.push("/java");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-6">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg space-y-4"
+        className="w-full max-w-xl bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-gray-700"
       >
-        <h1 className="text-2xl font-bold text-center">
+        <h1 className="text-3xl font-bold text-center text-white mb-6">
           Add Java Interview Experience
         </h1>
 
         <input
           placeholder="Your Name"
-          className="w-full border p-2 rounded"
           required
+          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
         <input
           placeholder="Company Name"
-          className="w-full border p-2 rounded"
           required
+          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
           onChange={(e) => setForm({ ...form, company: e.target.value })}
         />
 
         <select
-          className="w-full border p-2 rounded"
+          required
+          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
           onChange={(e) =>
             setForm({ ...form, round_type: e.target.value })
           }
         >
-          <option value="screening">Screening</option>
-          <option value="technical">Technical</option>
-          <option value="coding">Coding</option>
-          <option value="panel">Panel</option>
+          <option value="">Select Interview Round</option>
+          <option value="Screening">Screening</option>
+          <option value="Technical">Technical</option>
+          <option value="HR">HR</option>
         </select>
 
         <select
-          className="w-full border p-2 rounded"
+          required
+          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
           onChange={(e) =>
             setForm({ ...form, difficulty: e.target.value })
           }
         >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="">Select Difficulty</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
         </select>
 
         <textarea
           placeholder="Write your experience..."
-          className="w-full border p-2 rounded h-32"
           required
+          rows={5}
+          className="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white border border-gray-600"
           onChange={(e) =>
             setForm({ ...form, experience: e.target.value })
           }
         />
 
-        <button className="w-full bg-black text-white p-2 rounded">
+        <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:scale-105 transition">
           Save Experience
         </button>
       </form>
