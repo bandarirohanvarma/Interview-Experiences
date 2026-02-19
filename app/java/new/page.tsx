@@ -7,92 +7,105 @@ import { supabase } from "../../../lib/supabase";
 export default function JavaNewPage() {
   const router = useRouter();
 
-  const [form, setForm] = useState({
-    name: "",
-    company: "",
-    round_type: "",
-    difficulty: "",
-    experience: "",
-  });
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [round, setRound] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [experience, setExperience] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    await supabase.from("experiences").insert([
+    const { error } = await supabase.from("experiences").insert([
       {
-        ...form,
+        name,
+        company,
+        round,
+        difficulty,
+        experience,
         category: "java",
-        company: form.company.trim().toLowerCase(),
       },
     ]);
 
-    router.push("/java");
-  }
+    if (!error) {
+      router.push("/java");
+    } else {
+      alert("Error saving experience");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-xl bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-gray-700"
-      >
-        <h1 className="text-3xl font-bold text-center text-white mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black flex items-center justify-center p-6">
+      <div className="bg-slate-800 p-8 rounded-2xl w-full max-w-lg shadow-2xl">
+        <h1 className="text-3xl font-bold text-white mb-6 text-center">
           Add Java Interview Experience
         </h1>
 
-        <input
-          placeholder="Your Name"
-          required
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
 
-        <input
-          placeholder="Company Name"
-          required
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
-          onChange={(e) => setForm({ ...form, company: e.target.value })}
-        />
+          <input
+            type="text"
+            placeholder="Your Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-gray-400"
+            required
+          />
 
-        <select
-          required
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
-          onChange={(e) =>
-            setForm({ ...form, round_type: e.target.value })
-          }
-        >
-          <option value="">Select Interview Round</option>
-          <option value="Screening">Screening</option>
-          <option value="Technical">Technical</option>
-          <option value="HR">HR</option>
-        </select>
+          <input
+            type="text"
+            placeholder="Company Name"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-gray-400"
+            required
+          />
 
-        <select
-          required
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 text-white border border-gray-600"
-          onChange={(e) =>
-            setForm({ ...form, difficulty: e.target.value })
-          }
-        >
-          <option value="">Select Difficulty</option>
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
-        </select>
+          <select
+            value={round}
+            onChange={(e) => setRound(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-white"
+            required
+          >
+            <option value="">Select Interview Round</option>
+            <option>Screening</option>
+            <option>Technical 1</option>
+            <option>Technical 2</option>
+            <option>Technical + Coding</option>
+            <option>Coding</option>
+            <option>HR</option>
+            <option>Panel</option>
+          </select>
 
-        <textarea
-          placeholder="Write your experience..."
-          required
-          rows={5}
-          className="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white border border-gray-600"
-          onChange={(e) =>
-            setForm({ ...form, experience: e.target.value })
-          }
-        />
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-white"
+            required
+          >
+            <option value="">Select Difficulty</option>
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+          </select>
 
-        <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:scale-105 transition">
-          Save Experience
-        </button>
-      </form>
+          <textarea
+            placeholder="Write your experience..."
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-gray-400"
+            rows={5}
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition"
+          >
+            Save Experience
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
