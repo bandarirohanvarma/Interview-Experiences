@@ -9,30 +9,25 @@ export default function DataNewPage() {
 
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
-  const [roundType, setRoundType] = useState("screening");
+  const [round, setRound] = useState("screening");
   const [difficulty, setDifficulty] = useState("easy");
   const [experience, setExperience] = useState("");
-  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
 
     const { error } = await supabase.from("experiences").insert([
       {
         name,
-        company: company.toLowerCase().trim(),
-        category: "data",
-        round_type: roundType,
+        company: company.toLowerCase(),
+        round_type: round,
         difficulty,
         experience,
+        category: "data",
       },
     ]);
 
-    setLoading(false);
-
     if (error) {
-      console.error(error);
       alert("Error saving experience");
       return;
     }
@@ -41,69 +36,87 @@ export default function DataNewPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-black px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-black flex items-center justify-center px-6">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-xl bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl space-y-4 border border-white/20"
+        className="w-full max-w-xl bg-slate-900/60 backdrop-blur-lg border border-slate-700 rounded-2xl p-8 space-y-6 shadow-2xl"
       >
-        <h1 className="text-3xl font-bold text-white text-center">
+        <h1 className="text-3xl font-bold text-center text-white">
           Add Data Interview Experience
         </h1>
 
         <input
-          required
           placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
+          required
+          className="w-full px-4 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:ring-2 focus:ring-purple-500"
         />
 
         <input
-          required
           placeholder="Company Name"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
+          required
+          className="w-full px-4 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:ring-2 focus:ring-purple-500"
         />
 
+        {/* ROUND */}
         <select
-          value={roundType}
-          onChange={(e) => setRoundType(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30"
+          value={round}
+          onChange={(e) => setRound(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:ring-2 focus:ring-purple-500 appearance-none"
         >
-          <option value="screening">Screening</option>
-          <option value="technical 1">Technical 1</option>
-          <option value="technical 2">Technical 2</option>
-          <option value="technical + coding">Technical + Coding</option>
-          <option value="coding">Coding</option>
-          <option value="panel">Panel</option>
-          <option value="hr">HR</option>
+          <option value="screening" className="bg-slate-800 text-white">
+            Screening
+          </option>
+          <option value="technical 1" className="bg-slate-800 text-white">
+            Technical 1
+          </option>
+          <option value="technical 2" className="bg-slate-800 text-white">
+            Technical 2
+          </option>
+          <option value="technical + coding" className="bg-slate-800 text-white">
+            Technical + Coding
+          </option>
+          <option value="coding" className="bg-slate-800 text-white">
+            Coding
+          </option>
+          <option value="hr" className="bg-slate-800 text-white">
+            HR
+          </option>
+          <option value="panel" className="bg-slate-800 text-white">
+            Panel
+          </option>
         </select>
 
+        {/* DIFFICULTY */}
         <select
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30"
+          className="w-full px-4 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:ring-2 focus:ring-purple-500 appearance-none"
         >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="easy" className="bg-slate-800 text-white">
+            Easy
+          </option>
+          <option value="medium" className="bg-slate-800 text-white">
+            Medium
+          </option>
+          <option value="hard" className="bg-slate-800 text-white">
+            Hard
+          </option>
         </select>
 
         <textarea
-          required
           placeholder="Write your experience..."
           value={experience}
           onChange={(e) => setExperience(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 h-32"
+          required
+          className="w-full px-4 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:ring-2 focus:ring-purple-500 h-32"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:opacity-90 transition"
-        >
-          {loading ? "Saving..." : "Save Experience"}
+        <button className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:opacity-90 transition">
+          Save Experience
         </button>
       </form>
     </div>
